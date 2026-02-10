@@ -15,6 +15,12 @@
       "description": "Research-to-Publication Pipeline following the CMDS Process (Connect → Merge → Develop → Share). Orchestrates literature discovery, synthesis, manuscript drafting, editing, and journal formatting using 5 specialized sub-agents and 5 skills.",
       "source": "./plugins/research-pipeline",
       "strict": false
+    },
+    {
+      "name": "dev-orchestrator",
+      "description": "Autonomous Development Orchestrator with 3-Tier agent system (Opus/Sonnet/Haiku). 13 specialized agents and 12 skills for the full SDLC — planning, architecture, implementation, testing, review, and documentation.",
+      "source": "./plugins/dev-orchestrator",
+      "strict": false
     }
   ]
 }
