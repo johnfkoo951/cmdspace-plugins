@@ -1,0 +1,8 @@
+{
+  "name": "dev-orchestrator",
+  "description": "Autonomous Development Orchestrator with 3-Tier agent system (Opus/Sonnet/Haiku). Provides 13 specialized agents and 12 skills for the full SDLC — from planning and architecture through implementation, testing, review, and documentation.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Yohan Koo"
+  }
+}

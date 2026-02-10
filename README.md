@@ -30,6 +30,29 @@ Orchestrates the full academic research workflow from literature discovery to jo
 
 **MCP integrations:** PubMed, Firecrawl, Pinecone
 
+---
+
+### dev-orchestrator
+
+Autonomous Development Orchestrator with 3-Tier agent system (Opus/Sonnet/Haiku).
+
+Provides 13 specialized agents and 12 skills for the full SDLC — from planning and architecture through implementation, testing, review, and documentation.
+
+| Tier | Agents | Model | Role |
+|------|--------|-------|------|
+| 1. Brain | planner, architect, critic, security-reviewer | opus | Strategic planning, architecture, security |
+| 2. Hand | executor, code-reviewer, designer, researcher, build-fixer | sonnet | Implementation, review, design |
+| 3. Eye | explorer, tdd-guide, qa-tester, writer | haiku | Search, testing, documentation |
+
+**Skills included:**
+
+| Category | Skills |
+|----------|--------|
+| Execution Modes | `/autopilot`, `/focus`, `/pipeline` |
+| Planning | `/plan`, `/decompose`, `/estimate` |
+| Quality | `/code-review`, `/security-review`, `/tdd` |
+| Exploration | `/deepsearch`, `/deepinit`, `/hud` |
+
 ## Installation
 
 ```bash
@@ -38,6 +61,7 @@ Orchestrates the full academic research workflow from literature discovery to jo
 
 # Install plugin
 /plugins install research-pipeline@cmdspace-plugins
+/plugins install dev-orchestrator@cmdspace-plugins
 ```
 
 ## License
