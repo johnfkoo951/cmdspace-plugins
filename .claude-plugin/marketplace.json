@@ -1,0 +1,20 @@
+{
+  "name": "cmdspace-plugins",
+  "description": "Claude Code plugins by CMDSPACE (커맨드스페이스) - Research Pipeline, and more",
+  "owner": {
+    "name": "Yohan Koo",
+    "email": "johnfkoo951@gmail.com"
+  },
+  "metadata": {
+    "description": "CMDS Process (Connect → Merge → Develop → Share) 기반 Claude Code 플러그인 모음",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "research-pipeline",
+      "description": "Research-to-Publication Pipeline following the CMDS Process (Connect → Merge → Develop → Share). Orchestrates literature discovery, synthesis, manuscript drafting, editing, and journal formatting using 5 specialized sub-agents and 5 skills.",
+      "source": "./plugins/research-pipeline",
+      "strict": false
+    }
+  ]
+}

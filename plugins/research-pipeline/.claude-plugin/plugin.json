@@ -1,0 +1,8 @@
+{
+  "name": "research-pipeline",
+  "description": "Research-to-Publication Pipeline following the CMDS Process (Connect \u2192 Merge \u2192 Develop \u2192 Share). Orchestrates literature discovery, synthesis, manuscript drafting, editing, and journal formatting using specialized sub-agents.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Yohan Koo"
+  }
+}
