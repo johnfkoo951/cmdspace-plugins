@@ -10,7 +10,7 @@ CMDS Process(Connect - Merge - Develop - Share) 기반 연구-출판 파이프�
 ## 워크플로우 개요
 
 ```
-Phase 1: Connect (자료 조사) → Phase 2: Merge (문헌 분석) → Phase 3: Develop (원고 집필) → Phase 4: Edit (편집) → Phase 5: Share (출판)
+Phase 1: Connect (자료 조사) → Phase 2: Merge (문헌 분석) → Phase 3: Develop (원고 집필) → Phase 4: Edit (편집) → Phase 5: Share (출판) → [Phase 6: Web (선택)]
 ```
 
 ---
@@ -53,6 +53,15 @@ Phase 1: Connect (자료 조사) → Phase 2: Merge (문헌 분석) → Phase 3:
         {"label": "Phase 2부터", "description": "이미 논문 목록이 있어서 분석부터 시작"},
         {"label": "Phase 3부터", "description": "문헌 리뷰 완료, 원고 작성부터"},
         {"label": "기존 프로젝트 재개", "description": "_pipeline-state.md가 있는 프로젝트 이어하기"}
+      ],
+      "multiSelect": false
+    },
+    {
+      "header": "웹 배포",
+      "question": "완료 후 웹페이지로 배포할까요?",
+      "options": [
+        {"label": "배포 안 함 (Recommended)", "description": "원고 파일만 생성"},
+        {"label": "웹 배포", "description": "연구 결과를 Academic Paper Showcase 웹페이지로 Vercel 배포"}
       ],
       "multiSelect": false
     }
@@ -245,6 +254,71 @@ Phase 2 완료 후 `AskUserQuestion`으로 확인:
 
 ---
 
+## Phase 6: Web (웹 배포) — 선택적
+
+> Phase 0에서 "웹 배포"를 선택한 경우에만 실행. 선택하지 않았으면 이 Phase를 건너뛴다.
+
+### 실행 조건
+- Phase 0에서 `웹 배포` 옵션을 선택했을 때
+- 또는 파이프라인 완료 후 사용자가 "웹으로 배포해줘", "웹페이지 만들어줘" 등을 요청했을 때
+
+### 실행 방법
+
+`cmdspace-web-builder` 스킬의 **#9 Academic Paper Showcase** 템플릿을 사용한다.
+
+1. **입력 파일 읽기**: `09-final-manuscript-ko.md` + `09-final-manuscript-en.md` (또는 단일 언어 원고)
+2. **웹사이트 폴더 생성**: 프로젝트 폴더 내 `website/` 서브폴더
+3. **HTML 생성**: Academic Paper Showcase 패턴 적용
+   - Hero: 논문 제목, 저자, 소속, 핵심 통계
+   - 프레임워크 시각화 (해당 시)
+   - 학술 표 (data-table + TRL 색상 코딩)
+   - 연구 갭/RQ/가설 카드
+   - KO/EN 이중 언어 토글 (이중 언어 선택 시)
+4. **Vercel 배포**: `vercel --yes --prod`
+5. **Deployment Protection 해제**: Vercel API로 공개 접근 설정
+
+### 핵심 컴포넌트
+
+| 원고 섹션 | 웹 컴포넌트 | CSS 클래스 |
+|-----------|-----------|-----------|
+| 초록/키워드 | 키워드 카드 그리드 | `.guide-grid` + `.guide-card` |
+| 이론 프레임워크 | 다차원 다이어그램 | `.teep-container` + `.teep-dim` |
+| 데이터 표 | 학술 표 | `.data-table` + `.trl-high/mid/low` |
+| 주요 플레이어 | 엔티티 카드 | `.player-grid` + `.player-tag` |
+| 환경 비교 | 좌우 대비 | `.compare-grid` + `.compare-col` |
+| 연구 갭 | 긴급도 카드 | `.gap-grid` + `.gap-card.critical/high/medium` |
+| RQ/가설 | 연구 어젠다 카드 | `.rq-grid` + `.rq-card` |
+| 핵심 인용 | 인용문 섹션 | `.quote-section` |
+
+### 이중 언어 처리
+- `data-lang` 속성 + CSS `[data-lang="ko"] .en-only{display:none}` 패턴
+- 고정 위치 KO/EN 전환 버튼 (`.lang-switch`)
+- JS ~5줄로 구현 (프레임워크 불필요)
+
+### Quality Gate 6 (QG6)
+
+| 항목 | 기준 |
+|------|------|
+| HTTP 상태 | 200 OK (공개 접근 가능) |
+| 모든 섹션 | 원고 핵심 내용 반영 |
+| 반응형 | 모바일/태블릿 정상 표시 |
+| 언어 전환 | KO/EN 토글 정상 동작 (이중 언어 시) |
+
+### 파이프라인 상태 업데이트
+
+Phase 6 완료 시 `_pipeline-state.md`에 추가:
+```
+| Phase 6: Web (웹 배포) | ✅ Completed | YYYY-MM-DD |
+```
+및 Phase 6 출력:
+```
+### Phase 6
+- [x] `website/index.html` — Academic Paper Showcase
+- [x] Production URL: https://[project-name].vercel.app
+```
+
+---
+
 ## CMDS 볼트 연동
 
 ### YAML Frontmatter 규칙 (모든 생성 파일 공통)
@@ -277,6 +351,7 @@ status: inProgress
 | Phase 3 | `[[📖 400 Methodologies]]` - 방법론 적용 |
 | Phase 4 | `[[📖 600 Specialties]]` - 전문 지식 |
 | Phase 5 | `[[📖 800 Outputs]]` - 최종 산출물 |
+| Phase 6 | `[[📚 806 Webpages]]` - 웹 배포 (선택) |
 
 ---
 

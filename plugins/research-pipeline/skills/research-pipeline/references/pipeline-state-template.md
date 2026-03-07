@@ -3,6 +3,7 @@ type: pipeline-state
 project: "{project-name}"
 topic: "{research-topic}"
 target_output: "{journal|conference|newsletter|lecture}"
+web_deploy: "{yes|no}"
 target_venue: "{학술지/학회명}"
 language: "{ko|en|bilingual}"
 current_phase: 1
@@ -42,6 +43,7 @@ date_modified: YYYY-MM-DD
 | 5 | 09-cover-letter.md | pending | |
 | 5 | 09-submission-checklist.md | pending | |
 | 5 | 09-abstract-keywords.md | pending | |
+| 6 | website/index.html | pending | 웹 배포 선택 시 |
 
 ## Quality Gate Log
 
@@ -52,6 +54,7 @@ date_modified: YYYY-MM-DD
 | QG3 | 3 → 4 | - | - | - |
 | QG4 | 4 → 5 | - | - | - |
 | QG5 | 5 완료 | - | - | - |
+| QG6 | 6 완료 | - | - | - |
 
 ## 사용자 결정 기록
 
@@ -59,5 +62,6 @@ date_modified: YYYY-MM-DD
 |------|------|------|
 | Phase 0 | 출력 유형 | {target_output} |
 | Phase 0 | 언어 | {language} |
+| Phase 0 | 웹 배포 | {web_deploy} |
 | Phase 2 후 | 이론 프레임워크 | - |
 | Phase 3 후 | 원고 구조 | - |
