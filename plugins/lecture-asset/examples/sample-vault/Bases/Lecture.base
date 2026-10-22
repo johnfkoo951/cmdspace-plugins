@@ -1,0 +1,77 @@
+formulas:
+  카드수: 'if(chunkCount, chunkCount, "")'
+properties:
+  note.date:
+    displayName: 강의일
+  note.lectureTitle:
+    displayName: 강의 제목
+  note.eventName:
+    displayName: 행사
+  note.audience:
+    displayName: 청중
+  note.durationMin:
+    displayName: 분
+  note.lectureDate:
+    displayName: 강의일
+  note.chunkTheme:
+    displayName: 테마
+  note.timecode:
+    displayName: 타임코드
+  note.lectures:
+    displayName: 출처 강의
+views:
+  - type: table
+    name: 강의 기록 (날짜순)
+    filters:
+      and:
+        - 'type == "lecture"'
+    order:
+      - file.name
+      - date
+      - lectureTitle
+      - eventName
+      - audience
+      - durationMin
+      - chunkCount
+      - status
+    sort:
+      - property: date
+        direction: DESC
+      - property: file.name
+        direction: ASC
+    columnSize:
+      file.name: 380
+  - type: table
+    name: 지식 카드 (날짜순)
+    filters:
+      and:
+        - 'type == "lecture-chunk"'
+    order:
+      - file.name
+      - lectureDate
+      - chunkTheme
+      - timecode
+      - lectures
+    sort:
+      - property: lectureDate
+        direction: DESC
+      - property: timecode
+        direction: ASC
+    columnSize:
+      file.name: 420
+  - type: table
+    name: 지식 카드 (테마별)
+    filters:
+      and:
+        - 'type == "lecture-chunk"'
+    order:
+      - file.name
+      - lectureDate
+      - timecode
+      - lectures
+    groupBy:
+      property: chunkTheme
+      direction: ASC
+    sort:
+      - property: lectureDate
+        direction: DESC

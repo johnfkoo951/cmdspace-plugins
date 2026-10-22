@@ -1,0 +1,13 @@
+{
+  "name": "lecture-asset",
+  "description": "Turn a finished lecture's transcript into reusable Obsidian knowledge assets: a hub note that summarizes and indexes the talk, the raw transcript preserved byte-for-byte, atomic claim cards cross-linked to your vault, a Bases view, and a read-only closing gate that catches missed steps.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Yohan Koo (CMDSPACE)",
+    "url": "https://cmdspace.work"
+  },
+  "homepage": "https://github.com/johnfkoo951/cmdspace-plugins/tree/main/plugins/lecture-asset",
+  "repository": "https://github.com/johnfkoo951/cmdspace-plugins",
+  "license": "MIT",
+  "keywords": ["obsidian", "lecture", "transcript", "atomic-notes", "zettelkasten", "knowledge-management", "bases"]
+}
