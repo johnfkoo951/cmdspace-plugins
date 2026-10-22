@@ -1,13 +1,13 @@
 {
   "name": "cmdspace-plugins",
-  "description": "Claude Code plugins by CMDSPACE (커맨드스페이스) - Research Pipeline, and more",
+  "description": "Claude Code plugins by CMDSPACE (커맨드스페이스): research pipeline, dev orchestrator, and lecture-asset",
   "owner": {
     "name": "Yohan Koo",
     "email": "johnfkoo951@gmail.com"
   },
   "metadata": {
     "description": "CMDS Process (Connect → Merge → Develop → Share) 기반 Claude Code 플러그인 모음",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
@@ -20,6 +20,12 @@
       "name": "dev-orchestrator",
       "description": "Autonomous Development Orchestrator with 3-Tier agent system (Opus/Sonnet/Haiku). 13 specialized agents and 12 skills for the full SDLC — planning, architecture, implementation, testing, review, and documentation.",
       "source": "./plugins/dev-orchestrator",
+      "strict": false
+    },
+    {
+      "name": "lecture-asset",
+      "description": "Turn a finished lecture's transcript into reusable Obsidian knowledge assets: a hub note that summarizes and indexes the talk, the raw transcript preserved byte-for-byte, atomic claim cards cross-linked to your vault, a Bases view, and a read-only closing gate.",
+      "source": "./plugins/lecture-asset",
       "strict": false
     }
   ]
