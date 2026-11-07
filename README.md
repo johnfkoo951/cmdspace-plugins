@@ -9,6 +9,7 @@ Claude Code plugins by [CMDSPACE](https://cmdspace.work) (Yohan Koo).
 | Plugin | What it does |
 |---|---|
 | [lecture-asset](plugins/lecture-asset/) | Turn a finished lecture's transcript into Obsidian knowledge assets: hub note, preserved transcript, atomic claim cards, Bases index, closing gate |
+| [eagle-library](plugins/eagle-library/) | File images into Eagle libraries with consistent metadata, move them between libraries, and keep the Obsidian notes that link to them working |
 | [research-pipeline](plugins/research-pipeline/) | Research-to-publication pipeline with 5 sub-agents |
 | [dev-orchestrator](plugins/dev-orchestrator/) | 3-tier agent system for the full software development lifecycle |
 
@@ -21,6 +22,18 @@ Turns a finished lecture into notes you will reuse. One talk becomes a hub note 
 | `lecture-asset` | Say "강의 자산화해줘" or "turn this talk transcript into lecture assets" with a transcript |
 
 Includes a fictional [sample vault](plugins/lecture-asset/examples/sample-vault/). Details: [plugins/lecture-asset](plugins/lecture-asset/).
+
+---
+
+### eagle-library
+
+Lets an agent file images into [Eagle](https://eagle.cool) without breaking the Obsidian notes that link to Eagle originals. Imports from a manifest with folders, names, tags, annotations and ratings (duplicates skipped, replacements trashed before adding, new IDs verified), transfers items between libraries while rewriting vault links, checks and repairs broken Eagle links, exports Eagle folders into project folders, and keeps one note per asset for an Obsidian Bases image gallery. Paths come from one config file.
+
+| Skill | Usage |
+|-------|-------|
+| `eagle-library` | Say "put these images into Eagle", "이글에 넣어줘", or "check my Eagle links" |
+
+Includes 8 scripts and regression tests that run without the Eagle app. Details: [plugins/eagle-library](plugins/eagle-library/).
 
 ---
 
@@ -81,6 +94,7 @@ Provides 13 specialized agents and 12 skills for the full SDLC — from planning
 
 # Install plugin
 /plugin install lecture-asset@cmdspace-plugins
+/plugin install eagle-library@cmdspace-plugins
 /plugin install research-pipeline@cmdspace-plugins
 /plugin install dev-orchestrator@cmdspace-plugins
 ```

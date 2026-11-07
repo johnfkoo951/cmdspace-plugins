@@ -1,13 +1,13 @@
 {
   "name": "cmdspace-plugins",
-  "description": "Claude Code plugins by CMDSPACE (커맨드스페이스): research pipeline, dev orchestrator, and lecture-asset",
+  "description": "Claude Code plugins by CMDSPACE (커맨드스페이스): research pipeline, dev orchestrator, lecture-asset, and eagle-library",
   "owner": {
     "name": "Yohan Koo",
     "email": "johnfkoo951@gmail.com"
   },
   "metadata": {
     "description": "CMDS Process (Connect → Merge → Develop → Share) 기반 Claude Code 플러그인 모음",
-    "version": "1.1.0"
+    "version": "1.2.0"
   },
   "plugins": [
     {
@@ -26,6 +26,12 @@
       "name": "lecture-asset",
       "description": "Turn a finished lecture's transcript into reusable Obsidian knowledge assets: a hub note that summarizes and indexes the talk, the raw transcript preserved byte-for-byte, atomic claim cards cross-linked to your vault, a Bases view, and a read-only closing gate.",
       "source": "./plugins/lecture-asset",
+      "strict": false
+    },
+    {
+      "name": "eagle-library",
+      "description": "File images and other assets into Eagle (eagle.cool) libraries through the local API with consistent folders, names, tags and annotations; move items between libraries without breaking the Obsidian notes that link to them; check and repair those links; export Eagle folders into projects; and keep one Obsidian note per asset for a Bases image gallery.",
+      "source": "./plugins/eagle-library",
       "strict": false
     }
   ]

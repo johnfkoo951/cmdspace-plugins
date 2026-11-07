@@ -1,0 +1,55 @@
+{
+  "_doc": "Rules for eagle_asset_notes.py. Copy to ~/.config/eagle-library/asset-notes-rules.json (or point config.json 'assetNotesRules' at it) and edit. Only Eagle items inside a folder whose path starts with one of folders[].prefix get a note. scene is decided in this order: overrides → kindScene (fixed per assetKind) → sceneKeywords (first match against item name, own tags and title; the full annotation is NOT searched because headers like 'Usage: lecture deck' cause misclassification) → folders[].defaultScene → defaultScene. Names ending in variantSuffixes (e.g. an upscaled '-hd' copy) share the original's note.",
+  "library": "design",
+  "noteRoot": "Assets/Visual Assets",
+  "baseFile": "Bases/Visual Assets.base",
+  "author": "[[Your Name]]",
+  "variantSuffixes": ["-hd"],
+  "systemTags": ["character", "scene", "prop", "background", "avatar", "mascot", "draft", "transparent", "hd", "upscaled", "16:9", "9:16", "1:1"],
+  "genTagPrefixes": ["gpt-", "gemini-", "flux-", "mj-"],
+  "titleKeys": ["Scene:", "Prop:", "장면:", "소품:"],
+  "characters": ["Mascot", "Your Name"],
+  "extraFrontmatter": {
+    "status": "completed"
+  },
+  "folders": [
+    {
+      "prefix": "Characters/Mascot/Avatars",
+      "group": "Mascot Avatars",
+      "assetKind": "Avatar",
+      "usage": ["profile image", "slide corner", "sticker"]
+    },
+    {
+      "prefix": "Characters/Mascot/Scenes",
+      "group": "Mascot Scenes",
+      "assetKind": "Scene",
+      "defaultScene": "Knowledge Work",
+      "usage": ["lecture slides", "blog header", "newsletter"]
+    },
+    {
+      "prefix": "Characters/Mascot/Props",
+      "group": "Mascot Props",
+      "assetKind": "Prop",
+      "usage": ["slide overlay", "video overlay"]
+    }
+  ],
+  "kindScene": {
+    "Avatar": "Identity",
+    "Prop": "Kit Element",
+    "Background": "Kit Element"
+  },
+  "sceneKeywords": [
+    ["Teaching", ["lecture", "workshop", "classroom", "whiteboard", "강의", "워크숍"]],
+    ["Research", ["paper", "data", "analysis", "interview", "논문", "분석"]],
+    ["Writing & Media", ["writing", "newsletter", "video", "podcast", "집필", "영상"]],
+    ["Community", ["meetup", "party", "graduation", "모임", "축하"]],
+    ["Knowledge Work", ["notes", "graph", "vault", "tag", "노트", "볼트"]]
+  ],
+  "defaultScene": "Other",
+  "overrides": {
+    "mascot-launch-poster": {
+      "scene": "Community",
+      "usage": ["launch announcement", "SNS card"]
+    }
+  }
+}

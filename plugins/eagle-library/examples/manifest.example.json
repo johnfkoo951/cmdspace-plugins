@@ -1,0 +1,23 @@
+{
+  "library": "/Users/you/Eagle/Personal.library",
+  "trash": [],
+  "items": [
+    {
+      "path": "~/Downloads/mascot-wave.png",
+      "folder": "20. Assets/23. Characters/01 Mascot",
+      "name": "mascot-wave",
+      "tags": ["character", "mascot", "transparent"],
+      "annotation": "image-gen 2026-01-15 · gen: <model id> · Scene: mascot waving hello\nprompt: a friendly round mascot waving, flat illustration, transparent background",
+      "url": "",
+      "star": 0
+    },
+    {
+      "path": "~/Downloads/lecture-hall.png",
+      "folder": "20. Assets/24. Scenes",
+      "name": "scene-lecture-hall",
+      "tags": ["scene", "lecture"],
+      "annotation": "image-gen 2026-01-15 · gen: <model id> · Scene: a small lecture hall seen from the back row",
+      "url": ""
+    }
+  ]
+}

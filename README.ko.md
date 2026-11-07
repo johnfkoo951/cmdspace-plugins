@@ -9,6 +9,7 @@
 | 플러그인 | 하는 일 |
 |---|---|
 | [lecture-asset](plugins/lecture-asset/README.ko.md) | 끝난 강의의 전사본을 옵시디언 지식 자산으로 바꿉니다: 허브 노트, 원문 보존 전사본, 주장 카드(원소화), Bases 인덱스, 마감 게이트 |
+| [eagle-library](plugins/eagle-library/README.ko.md) | 이미지를 일관된 메타데이터로 Eagle 라이브러리에 넣고, 라이브러리 사이로 옮기고, 그 이미지를 링크한 옵시디언 노트를 살려 둡니다 |
 | [research-pipeline](plugins/research-pipeline/) | 서브 에이전트 5개로 문헌 탐색부터 학술지 투고까지 잇는 연구 파이프라인 |
 | [dev-orchestrator](plugins/dev-orchestrator/) | 3계층 에이전트로 기획부터 문서화까지 다루는 개발 오케스트레이터 |
 
@@ -21,6 +22,18 @@
 | `lecture-asset` | 전사본과 함께 "강의 자산화해줘"라고 말합니다 |
 
 가상의 [샘플 볼트](plugins/lecture-asset/examples/sample-vault/)가 들어 있습니다. 자세한 내용: [plugins/lecture-asset](plugins/lecture-asset/README.ko.md)
+
+---
+
+### eagle-library
+
+에이전트가 이미지를 [Eagle](https://eagle.cool)에 정리해 넣되, Eagle 원본을 링크한 옵시디언 노트는 깨지지 않게 합니다. manifest로 폴더·이름·태그·주석·별점까지 정리해 넣고(중복 건너뜀, 교체는 추가 전에 휴지통, 새 ID 검증), 볼트 링크를 고치며 라이브러리 사이로 옮기고, 깨진 Eagle 링크를 찾아 복구하고, Eagle 폴더를 프로젝트 폴더로 내보내고, 에셋마다 노트를 두어 Obsidian Bases 이미지 갤러리를 만듭니다. 경로는 설정 파일 하나에서 읽습니다.
+
+| 스킬 | 사용 |
+|-------|-------|
+| `eagle-library` | "이 이미지들 이글에 넣어줘", "Eagle 링크 점검해 줘"라고 말합니다 |
+
+스크립트 8개와 Eagle 앱 없이 돌아가는 회귀 테스트가 들어 있습니다. 자세한 내용: [plugins/eagle-library](plugins/eagle-library/README.ko.md)
 
 ---
 
@@ -77,6 +90,7 @@ CMDS Process(Connect - Merge - Develop - Share)를 따르는 연구-출판 파�
 
 # 플러그인 설치
 /plugin install lecture-asset@cmdspace-plugins
+/plugin install eagle-library@cmdspace-plugins
 /plugin install research-pipeline@cmdspace-plugins
 /plugin install dev-orchestrator@cmdspace-plugins
 ```
