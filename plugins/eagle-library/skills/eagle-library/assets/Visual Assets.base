@@ -1,0 +1,55 @@
+filters:
+  and:
+    - type == "visual-asset"
+formulas:
+  Eagle: link(eagleUrl, "Eagle")
+views:
+  - type: cards
+    name: Gallery
+    order:
+      - file.name
+      - scene
+      - assetKind
+    sort:
+      - property: scene
+        direction: ASC
+    image: note.image
+    imageAspectRatio: 1
+    cardSize: 200
+  - type: cards
+    name: By Scene
+    groupBy:
+      property: scene
+      direction: ASC
+    order:
+      - file.name
+      - assetKind
+    image: note.image
+    imageAspectRatio: 1
+    cardSize: 180
+  - type: cards
+    name: By Asset Kind
+    groupBy:
+      property: assetKind
+      direction: ASC
+    order:
+      - file.name
+      - scene
+    image: note.image
+    imageAspectRatio: 1
+    cardSize: 160
+  - type: table
+    name: Metadata
+    order:
+      - file.name
+      - aliases
+      - assetKind
+      - scene
+      - usage
+      - characters
+      - eagleFolder
+      - genModel
+      - formula.Eagle
+    sort:
+      - property: scene
+        direction: ASC

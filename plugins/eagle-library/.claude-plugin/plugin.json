@@ -1,0 +1,13 @@
+{
+  "name": "eagle-library",
+  "description": "File images and other assets into Eagle (eagle.cool) libraries through the local API with consistent folders, names, tags, annotations and ratings, move items between libraries without breaking the Obsidian notes that link to them, check and repair those links, export Eagle folders into project folders, and keep one Obsidian note per asset for a Bases image gallery.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Yohan Koo (CMDSPACE)",
+    "url": "https://cmdspace.work"
+  },
+  "homepage": "https://github.com/johnfkoo951/cmdspace-plugins/tree/main/plugins/eagle-library",
+  "repository": "https://github.com/johnfkoo951/cmdspace-plugins",
+  "license": "MIT",
+  "keywords": ["eagle", "eagle-app", "digital-asset-management", "obsidian", "bases", "image-library", "knowledge-management"]
+}
