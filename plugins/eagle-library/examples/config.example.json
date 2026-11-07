@@ -3,8 +3,9 @@
   "vaultName": "Your Vault",
   "libraries": {
     "personal": "~/Eagle/Personal.library",
-    "design": "~/Shared/Team Design.library",
+    "design": ["~/Shared/Team Design.library", "~/Library/CloudStorage/*/Shared/Team Design.library"],
     "photo": "~/Shared/Team Photo.library"
   },
-  "assetNotesRules": "~/.config/eagle-library/asset-notes-rules.json"
+  "assetNotesRules": "asset-notes-rules.json",
+  "taxonomy": "taxonomy.md"
 }

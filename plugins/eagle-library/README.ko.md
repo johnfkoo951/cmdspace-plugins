@@ -39,9 +39,10 @@ Claude Code 2.1.275 이상에서는 한 줄로도 됩니다: `/plugin install ea
   "vaultName": "Your Vault",
   "libraries": {
     "personal": "~/Eagle/Personal.library",
-    "design": "~/Shared/Team Design.library"
+    "design": ["~/Shared/Team Design.library", "~/Library/CloudStorage/*/Shared/Team Design.library"]
   },
-  "assetNotesRules": "~/.config/eagle-library/asset-notes-rules.json"
+  "assetNotesRules": "asset-notes-rules.json",
+  "taxonomy": "taxonomy.md"
 }
 ```
 
@@ -50,9 +51,18 @@ Claude Code 2.1.275 이상에서는 한 줄로도 됩니다: `/plugin install ea
 | `vault` | 옵시디언 볼트 루트. 링크 점검·갱신과 에셋 노트에 필요합니다. Eagle만 쓴다면 비워 둬도 됩니다 |
 | `vaultName` | `obsidian://open?vault=…` 링크에 들어가는 볼트 이름 (기본값은 폴더 이름) |
 | `libraries` | `.library` 폴더의 짧은 이름. 스크립트에 이 이름이나 전체 경로를 줍니다 |
-| `assetNotesRules` | 에셋 노트 규칙 (선택). [`asset-notes-rules.example.json`](skills/eagle-library/references/asset-notes-rules.example.json)에서 시작합니다 |
+| `assetNotesRules` | 에셋 노트 규칙 (선택). [`asset-notes-rules.example.json`](skills/eagle-library/references/asset-notes-rules.example.json)에서 시작합니다. 키 설명은 그 파일의 `_docKeys` |
+| `taxonomy` | 내 정리 규칙 문서 (선택). [`taxonomy.example.md`](skills/eagle-library/references/taxonomy.example.md)에서 시작합니다: 라이브러리 역할, 폴더 트리, 이름, 태그, 주석, URL, 별점 |
 
-그다음 라이브러리를 어떻게 정리하는지 적어 둡니다. [`taxonomy.example.md`](skills/eagle-library/references/taxonomy.example.md)는 라이브러리 역할, 폴더 트리, 이름, 태그, 주석, URL, 별점 규칙을 담은 템플릿입니다. 에이전트는 파일링 전에 이 문서와 기존 항목을 먼저 읽습니다.
+경로는 후보 목록으로 적을 수 있습니다. 그 기기에 실제로 있는 첫 경로를 쓰고 `*` glob도 됩니다. 그래서 동기화 폴더 위치가 다른 여러 기기에서 설정 파일 하나를 함께 쓸 수 있습니다. 상대경로는 설정 파일이 있는 폴더 기준이라, `config.json`·규칙 파일·정리 규칙 문서를 한 폴더(예: 동기화되는 노트 폴더)에 두고 `~/.config/eagle-library`가 그 폴더를 가리키게 하면 됩니다.
+
+스크립트가 무엇을 쓸지 확인:
+
+```bash
+python3 skills/eagle-library/scripts/eagle_common.py   # 볼트·라이브러리·규칙·정리 규칙 문서마다 ✓/✗
+```
+
+에이전트는 파일링 전에 이것을 돌리고 정리 규칙 문서를 먼저 읽습니다. 내 규칙은 스킬이 아니라 내 파일에 있으니 플러그인을 업데이트해도 덮어써지지 않습니다.
 
 ## 사용
 
@@ -74,7 +84,7 @@ python3 $S/eagle_import.py manifest.json --dry-run          # 확인 후 --dry-r
 python3 $S/eagle_transfer.py --from design --to personal --ids <ID…> --folder "10. Obsidian/13. Daily" --dry-run
 python3 $S/eagle_linkcheck.py                               # 깨진 링크가 있으면 exit 1
 python3 $S/eagle_export.py --library design --folder "Characters/Mascot" --recursive --dest ./assets
-python3 $S/eagle_asset_notes.py --check                     # 확인 후 --apply
+python3 $S/eagle_asset_notes.py --check                     # 확인 후 --apply, --preview <이름>은 노트 하나만 출력
 python3 $S/eagle_sheet.py --library design --uncategorized --out /tmp/uncat
 ```
 
@@ -97,6 +107,8 @@ Eagle 4.0.0에서 실측했습니다.
 ## 에셋 노트와 Bases 갤러리
 
 `eagle_asset_notes.py`는 규칙 파일에 적은 폴더의 Eagle 항목마다 노트를 하나씩 만듭니다. 노트의 `image` 속성은 Eagle 원본의 URL 인코딩된 `file:///` 경로라서, 이미지를 볼트에 복사하지 않고도 Bases 카드 뷰에 보입니다. 예시 Base는 [`skills/eagle-library/assets/Visual Assets.base`](skills/eagle-library/assets/Visual%20Assets.base)입니다. 이미 고친 노트는 다시 덮어쓰지 않습니다.
+
+코드를 고치지 않고 규칙 파일만으로 내 분류를 더할 수도 있습니다. `category`(예: 담당 팀)를 태그·키워드·폴더로 정하고, 값마다 넣을 프로퍼티·본문 줄·기본 장면을 적습니다. 한국어·영어 소제목(`lang`), 프로퍼티 순서(`fieldOrder`), 설명 템플릿, 고정 프로퍼티, 명령 출력으로 채우는 프로퍼티(`commandFields`)도 됩니다.
 
 ## 함께 쓰기
 

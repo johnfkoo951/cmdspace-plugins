@@ -2,6 +2,21 @@
 
 Versions are per plugin (each plugin's `.claude-plugin/plugin.json`). The marketplace index has its own version in `.claude-plugin/marketplace.json`.
 
+## 2026-11-07 · eagle-library 1.1.0
+
+### Added
+- Config paths may be a list of candidates (first existing wins, `*` globs allowed), so one config file serves several machines. Relative paths resolve next to the real config file.
+- `taxonomy` config key: the user's own filing rules. SKILL.md now has the agent print the resolved config (`python3 scripts/eagle_common.py`) and read the taxonomy first; user-specific rules belong there, not in the skill.
+- Asset-note rules without code changes: `category` (value from tags, folder or keywords, with per-value properties, body lines and fallback scene), `lang` (`en`/`ko` headings), `fieldOrder`, `descriptionTemplate` + `kindLabels`, `titlePatterns`, `titleTagPattern`, `commandFields`. Every key is documented in `asset-notes-rules.example.json` (`_docKeys`).
+- `eagle_asset_notes.py --preview <name>` prints one note without writing it.
+- 5 more regression tests (19 total).
+
+### Fixed
+- Folder rule `prefix` is a plain string prefix again, as in the original private skill. 1.0.0 required a `/` boundary, which silently skipped folders such as `01 Characters · Mascot` under a `01 Characters` rule.
+
+### Verified
+- Against the author's real libraries and vault, read-only: 653/653 asset notes identical to the private edition (properties, order, body); link check, export list, contact-sheet index, transfer and import dry runs identical.
+
 ## 2026-11-07 · eagle-library 1.0.0 · marketplace 1.2.0
 
 ### Added

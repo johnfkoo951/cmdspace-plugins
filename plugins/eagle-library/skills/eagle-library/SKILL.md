@@ -15,20 +15,30 @@ description: "Import, organize, transfer, and export files in Eagle (eagle.cool)
 {
   "vault": "~/Obsidian/Your Vault",
   "vaultName": "Your Vault",
-  "libraries": { "personal": "~/Eagle/Personal.library", "design": "~/Shared/Team Design.library" },
-  "assetNotesRules": "~/.config/eagle-library/asset-notes-rules.json"
+  "libraries": {
+    "personal": "~/Eagle/Personal.library",
+    "design": ["~/Shared/Team Design.library", "~/Library/CloudStorage/*/Shared/Team Design.library"]
+  },
+  "assetNotesRules": "asset-notes-rules.json",
+  "taxonomy": "taxonomy.md"
 }
 ```
 
-| 자리표시자 | 뜻 |
+| 키 | 뜻 |
 |---|---|
-| `{vault}` | Obsidian 볼트 루트. 노트 링크 검사·갱신·에셋 노트에 필요 (Eagle 만 쓰면 생략 가능) |
-| `{vaultName}` | `obsidian://open?vault=…` 에 들어가는 볼트 이름 |
-| `{libraries}` | 별칭 → `.library` 경로. 스크립트의 `--library`·`--from`·`--to` 에 별칭을 쓴다 |
-| `{taxonomy}` | 폴더·이름·태그 규칙 문서. 예시: `references/taxonomy.example.md` |
+| `vault` | Obsidian 볼트 루트. 노트 링크 검사·갱신·에셋 노트에 필요 (Eagle 만 쓰면 생략 가능) |
+| `vaultName` | `obsidian://open?vault=…` 에 들어가는 볼트 이름 (생략하면 볼트 폴더 이름) |
+| `libraries` | 별칭 → `.library` 경로. 스크립트의 `--library`·`--from`·`--to` 에 별칭을 쓴다 |
+| `assetNotesRules` | 에셋 노트 규칙 파일 (선택). 예시: `references/asset-notes-rules.example.json` |
+| `taxonomy` | **사용자 정리 규칙 문서** (선택). 예시: `references/taxonomy.example.md` |
 
+- 경로 값은 문자열 하나 또는 **후보 목록**이다. 그 기기에 실제로 있는 첫 경로를 쓰고 `*` glob 도 된다 → 설정 파일 하나로 여러 기기를 쓴다. 상대경로는 설정 파일이 있는 폴더 기준.
 - 사용자가 경로를 알려 주지 않았으면 `~/` 아래 `*.library` 폴더를 찾아 제안하고 확인받는다. 없는 라이브러리를 만들지 않는다.
-- 확정한 값은 설정 파일에 저장하고, 규칙 문서 위치는 볼트의 에이전트 설정 파일(`CLAUDE.md` 등)에 적어 두라고 제안한다.
+
+## 작업 시작 전 (매번)
+1. `python3 scripts/eagle_common.py` 로 해석된 설정을 본다 (✓/✗ 로 볼트·라이브러리·규칙 파일 존재 표시).
+2. `taxonomy` 문서가 있으면 **먼저 끝까지 읽는다.** 그 문서의 규칙(어느 라이브러리에 무엇을, 폴더·이름·태그·주석 형식, 사용자 고유 절차)이 이 SKILL.md 의 일반 규칙보다 우선한다.
+3. **사용자별 규칙은 이 SKILL.md 나 scripts/ 에 적지 않는다.** 이 폴더는 여러 사람이 함께 쓰는 공개 코드다. 사용자가 새 규칙을 말하면 `taxonomy` 문서(또는 규칙 JSON)에 적고, 코드는 버그 수정·일반 기능일 때만 고친다.
 
 ## 전제
 - Eagle 앱 실행 중 (로컬 API `http://localhost:41595`, Eagle 4.x 에서 실측).
@@ -42,7 +52,7 @@ description: "Import, organize, transfer, and export files in Eagle (eagle.cool)
 4. **실행**: `--dry-run` 없이. 스크립트는 ① 활성 라이브러리 확인 ② 라이브러리 전체 MD5 로 중복 건너뜀 ③ 교체 대상 먼저 휴지통 ④ 폴더 경로 자동 생성 ⑤ 추가 후 **새 id 생성 검증** ⑥ 별점 적용.
 5. **검증**: 폴더별 `item/list` 개수와 이름을 확인하고 결과를 보고한다 (추가·건너뜀·실패·휴지통 수).
 6. **노트에 연결된 항목 정리**: 항목 ID 로 볼트를 검색해 연결 노트를 찾는다. 이런 항목은 **폴더 이동만** 하고 이름은 바꾸지 않는다. `url` 이 비어 있으면 `obsidian://open?vault={vaultName}&file=<노트 경로>` 를, 주석이 비어 있으면 `연결 노트: …` 를 채운다. 끝나면 `eagle_linkcheck.py` 를 돌린다.
-7. **에셋 노트 (선택)**: 에셋마다 볼트 노트를 두는 경우 `python3 scripts/eagle_asset_notes.py --check` → 노트 없는 에셋이 있으면 `--apply`. 새 Eagle 폴더를 만들었으면 먼저 규칙 파일의 `folders` 에 추가한다 (규칙이 없는 폴더는 대상에서 빠진다). 보고에 `--check` 결과(노트 없음 0)를 넣는다.
+7. **에셋 노트 (선택)**: 에셋마다 볼트 노트를 두는 경우 `python3 scripts/eagle_asset_notes.py --check` → 노트 없는 에셋이 있으면 `--apply`. 새 Eagle 폴더를 만들었으면 먼저 규칙 파일의 `folders` 에 추가한다 (규칙이 없는 폴더는 대상에서 빠진다; `prefix` 는 문자열 앞부분 일치). 한 개만 미리 보려면 `--preview <Eagle 이름>`. 보고에 `--check` 결과(노트 없음 0)를 넣는다.
 
 ## 스크립트 한눈에 (`scripts/`)
 
