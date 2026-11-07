@@ -39,9 +39,10 @@ Create `~/.config/eagle-library/config.json` (or point `EAGLE_LIBRARY_CONFIG` at
   "vaultName": "Your Vault",
   "libraries": {
     "personal": "~/Eagle/Personal.library",
-    "design": "~/Shared/Team Design.library"
+    "design": ["~/Shared/Team Design.library", "~/Library/CloudStorage/*/Shared/Team Design.library"]
   },
-  "assetNotesRules": "~/.config/eagle-library/asset-notes-rules.json"
+  "assetNotesRules": "asset-notes-rules.json",
+  "taxonomy": "taxonomy.md"
 }
 ```
 
@@ -50,9 +51,18 @@ Create `~/.config/eagle-library/config.json` (or point `EAGLE_LIBRARY_CONFIG` at
 | `vault` | Obsidian vault root. Needed for link checks, link rewrites and asset notes; leave it out if you only use Eagle |
 | `vaultName` | Vault name used in `obsidian://open?vault=…` links (defaults to the folder name) |
 | `libraries` | Short names for your `.library` folders. Scripts accept these names or a full path |
-| `assetNotesRules` | Rules for asset notes (optional). Start from [`asset-notes-rules.example.json`](skills/eagle-library/references/asset-notes-rules.example.json) |
+| `assetNotesRules` | Rules for asset notes (optional). Start from [`asset-notes-rules.example.json`](skills/eagle-library/references/asset-notes-rules.example.json); every key is explained in its `_docKeys` |
+| `taxonomy` | Your own filing rules (optional). Start from [`taxonomy.example.md`](skills/eagle-library/references/taxonomy.example.md): library roles, folder tree, naming, tags, annotations, URLs, ratings |
 
-Then write down how you organize each library. [`taxonomy.example.md`](skills/eagle-library/references/taxonomy.example.md) is a template covering library roles, a folder tree, naming, tags, annotations, URLs and ratings. The agent reads it, and your existing items, before filing anything.
+Any path can be a list of candidates; the first one that exists on this machine wins, and `*` globs work. One config file can therefore serve several machines whose sync folders live in different places. Relative paths are resolved next to the config file, so you can keep `config.json`, the rules file and your taxonomy together in one folder (for example a synced notes folder) and point `~/.config/eagle-library` at it.
+
+Check what the scripts will use:
+
+```bash
+python3 skills/eagle-library/scripts/eagle_common.py   # ✓/✗ for vault, each library, rules, taxonomy
+```
+
+The agent runs this and reads your taxonomy before filing anything. Your rules live in your files, not in the skill, so updating the plugin never overwrites them.
 
 ## Use
 
@@ -74,7 +84,7 @@ python3 $S/eagle_import.py manifest.json --dry-run          # then without --dry
 python3 $S/eagle_transfer.py --from design --to personal --ids <ID…> --folder "10. Obsidian/13. Daily" --dry-run
 python3 $S/eagle_linkcheck.py                               # exit 1 if any link is broken
 python3 $S/eagle_export.py --library design --folder "Characters/Mascot" --recursive --dest ./assets
-python3 $S/eagle_asset_notes.py --check                     # then --apply
+python3 $S/eagle_asset_notes.py --check                     # then --apply; --preview <name> prints one note
 python3 $S/eagle_sheet.py --library design --uncategorized --out /tmp/uncat
 ```
 
@@ -97,6 +107,8 @@ Measured on Eagle 4.0.0:
 ## Asset notes and the Bases gallery
 
 `eagle_asset_notes.py` creates one note per Eagle item in the folders you list in the rules file. Each note's `image` property is the URL-encoded `file:///` path of the Eagle original, so a Bases card view renders it without copying the image into the vault. A sample Base is in [`skills/eagle-library/assets/Visual Assets.base`](skills/eagle-library/assets/Visual%20Assets.base). Notes you have already edited are never overwritten.
+
+The rules file can also carry your own classification without code changes: a `category` (for example the owning team) decided from tags, keywords or folder, with the properties, body lines and fallback scene each value adds; Korean or English headings (`lang`); property order (`fieldOrder`); a description template; constant properties; and properties filled from a command's output (`commandFields`).
 
 ## Companion
 

@@ -10,14 +10,21 @@
     "vaultName": "Your Vault",                 # obsidian://open?vault=… 에 쓰는 이름 (생략하면 vault 폴더 이름)
     "libraries": {                             # 별칭 → .library 경로. 스크립트의 --library/--from/--to 에 별칭을 쓴다
       "personal": "~/Eagle/Personal.library",
-      "design": "~/Shared/Design.library"
+      "design": ["~/Shared/Design.library", "~/Library/CloudStorage/*/Shared/Design.library"]
     },
-    "assetNotesRules": "~/.config/eagle-library/asset-notes-rules.json"   # 선택 (eagle_asset_notes.py)
+    "assetNotesRules": "~/.config/eagle-library/asset-notes-rules.json",  # 선택 (eagle_asset_notes.py)
+    "taxonomy": "~/.config/eagle-library/taxonomy.md"                     # 선택: 사용자 정리 규칙 문서 (에이전트가 먼저 읽는다)
   }
+
+경로 값은 문자열 하나 또는 후보 목록이다. 후보는 앞에서부터 실제로 있는 첫 경로를 쓰고, `*` 같은 glob 도 된다.
+기기마다 경로가 다를 때(동기화 폴더 위치 등) 설정 파일 하나로 여러 기기를 쓸 수 있다.
+상대경로는 설정 파일이 있는 폴더 기준이다.
 
 환경 변수 EAGLE_VAULT 는 vault 를, EAGLE_API 는 API 주소(기본 http://localhost:41595/api)를 덮어쓴다.
 설정이 없어도 --library 에 .library 절대경로를 직접 주면 동작한다.
+지금 해석된 설정 보기: python3 eagle_common.py
 """
+import glob
 import json
 import os
 import re
@@ -37,11 +44,27 @@ def _load_config():
         return json.load(f)
 
 
+def resolve_path(value):
+    """설정의 경로 값(문자열 또는 후보 목록) → 실제로 있는 첫 경로. 하나도 없으면 첫 후보를 그대로 돌려준다."""
+    if not value:
+        return ""
+    cands = value if isinstance(value, list) else [value]
+    base = os.path.dirname(os.path.realpath(CONFIG_PATH))
+    full = [os.path.join(base, os.path.expanduser(c)) for c in cands]   # 절대경로면 join 이 base 를 무시한다
+    for c in full:
+        hits = sorted(glob.glob(c)) if any(ch in c for ch in "*?[") else ([c] if os.path.exists(c) else [])
+        if hits:
+            return hits[0]
+    return full[0]
+
+
 CONFIG = _load_config()
 API = (os.environ.get("EAGLE_API") or CONFIG.get("api") or "http://localhost:41595/api").rstrip("/")
-VAULT = os.path.expanduser(os.environ.get("EAGLE_VAULT") or CONFIG.get("vault") or "")
+VAULT = os.path.expanduser(os.environ["EAGLE_VAULT"]) if os.environ.get("EAGLE_VAULT") else resolve_path(CONFIG.get("vault"))
 VAULT_NAME = CONFIG.get("vaultName") or (os.path.basename(VAULT.rstrip("/")) if VAULT else "")
-LIBS = {k: os.path.expanduser(v) for k, v in (CONFIG.get("libraries") or {}).items()}
+LIBS = {k: resolve_path(v) for k, v in (CONFIG.get("libraries") or {}).items()}
+TAXONOMY = resolve_path(CONFIG.get("taxonomy"))
+ASSET_NOTES_RULES = resolve_path(CONFIG.get("assetNotesRules"))
 
 
 def lib_path(name):
@@ -204,3 +227,19 @@ LIB_BY_NAME = {os.path.basename(v.rstrip("/")): v for v in LIBS.values()}
 
 def unquote(p):
     return urllib.parse.unquote(p)
+
+
+def show_config():
+    """해석된 설정을 사람이 읽게 출력한다 (에이전트가 작업 전에 확인용으로 돌린다)."""
+    ok = lambda p: "✓" if p and os.path.exists(p) else "✗"
+    print(f"config    {ok(CONFIG_PATH)} {CONFIG_PATH}")
+    print(f"vault     {ok(VAULT)} {VAULT or '(없음)'}   name: {VAULT_NAME or '(없음)'}")
+    for k, v in LIBS.items():
+        print(f"library   {ok(os.path.join(v, 'metadata.json'))} {k}: {v}")
+    print(f"taxonomy  {ok(TAXONOMY)} {TAXONOMY or '(없음 — references/taxonomy.example.md 를 참고)'}")
+    print(f"rules     {ok(ASSET_NOTES_RULES)} {ASSET_NOTES_RULES or '(없음)'}")
+    print(f"api       {API}")
+
+
+if __name__ == "__main__":
+    show_config()

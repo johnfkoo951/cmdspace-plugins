@@ -226,6 +226,86 @@ class TestSheet(Fixture):
         self.assertEqual(index[0]["notes"], ["Notes/linked.md"])
 
 
+class TestConfig(Fixture):
+    def test_candidates_glob_and_relative_paths(self):
+        cfg_dir = os.path.join(self.tmp, "cfg")
+        os.makedirs(cfg_dir)
+        shutil.copy(self.rules, os.path.join(cfg_dir, "my-rules.json"))
+        self.config = os.path.join(cfg_dir, "config.json")
+        write_json(self.config, {
+            "vault": [os.path.join(self.tmp, "missing vault"), self.vault],
+            "libraries": {"design": [os.path.join(self.tmp, "nope", "Team Design.library"),
+                                     os.path.join(self.tmp, "l*s", "Team Design.library")],
+                          "personal": self.personal},
+            "assetNotesRules": "my-rules.json", "taxonomy": "taxonomy.md"})
+        env = dict(self.env, EAGLE_LIBRARY_CONFIG=self.config)
+        r = self.run_script("eagle_common.py", env=env)
+        self.assertIn(f"vault     ✓ {self.vault}", r.stdout)
+        self.assertIn(f"design: {self.design}", r.stdout)                     # glob candidate resolved
+        real_cfg = os.path.realpath(cfg_dir)                                   # relative paths follow the real config location
+        self.assertIn(f"rules     ✓ {os.path.join(real_cfg, 'my-rules.json')}", r.stdout)
+        self.assertIn("taxonomy  ✗", r.stdout)
+        r = self.run_script("eagle_asset_notes.py", "--check", env=env)      # rules found through config
+        self.assertIn("노트 없음 2", r.stdout)
+
+
+class TestAssetNoteRules(Fixture):
+    def setUp(self):
+        super().setUp()
+        folders = [{"id": "F1", "name": "Characters", "children": [
+            {"id": "F2", "name": "Mascot", "children": [{"id": "F3", "name": "Scenes", "children": []}]},
+            {"id": "F4", "name": "Mascot · extra", "children": []}]}]
+        make_library(self.design, folders, [
+            dict(id="KTEST00000004", name="persona-901", folders=["F4"], tags=["character", "team.a"],
+                 annotation="image-gen 2026-02-01 · Persona 901 Kepler, the mapper")])
+        rules = read_json(self.rules)
+        rules.update(
+            lang="ko", titleKeys=["Scene:"], titlePatterns=[{"pattern": r"Persona (\d{3}) (\w+)", "format": "{1} {2}"}],
+            descriptionTemplate="{kindLabel} '{name}' for {usage}.", kindLabels={"Character": "Character art"},
+            commandFields={"source-link": [sys.executable, "-c", "print('app://test')"]},
+            extraFrontmatter={"status": "completed"},
+            fieldOrder=["type", "aliases", "description", "team", "status", "scene"],
+            folders=[{"prefix": "Characters/Mascot", "group": "Mascot", "assetKind": "Character", "usage": ["slides"],
+                      "categoryFromTags": True}],
+            category={"fromTags": {"team.a": "a"}, "keywords": [["b", ["lecture"]]], "default": "c",
+                      "values": {k: {"frontmatter": {"team": f"[[Team {k.upper()}]]"}, "scene": f"Scene {k.upper()}",
+                                     "body": [f"## 담당", f"- 팀 {k.upper()} · 장면 {{scene}}"]} for k in "abc"}})
+        rules["sceneKeywords"] = []
+        write_json(self.rules, rules)
+
+    def preview(self, name):
+        r = self.run_script("eagle_asset_notes.py", "--preview", name)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        return r.stdout
+
+    def test_prefix_is_plain_string_prefix(self):
+        r = self.run_script("eagle_asset_notes.py", "--check")
+        self.assertIn("대상 에셋 3", r.stdout)                                # 'Mascot · extra' matches 'Characters/Mascot'
+
+    def test_category_from_tags_and_keywords_and_default(self):
+        a, b, c = self.preview("persona-901"), self.preview("mascot-wave"), self.preview("scene lecture (hall)")
+        self.assertIn('team: "[[Team A]]"', a)                                # fromTags
+        self.assertIn('team: "[[Team B]]"', b)                                # keyword 'lecture' in tags
+        self.assertIn('team: "[[Team B]]"', c)                                # keyword in name
+        self.assertIn('scene: "Scene A"', a)                                  # category scene fallback
+        self.assertIn("- 팀 A · 장면 Scene A", a)                              # body line with {scene}
+
+    def test_lang_order_template_title_and_command(self):
+        a = self.preview("persona-901")
+        self.assertIn("## 장면\n", a)
+        self.assertIn("## 사용처\n", a)
+        self.assertIn("- 파일: `", a)
+        self.assertIn('description: "Character art \'persona-901\' for slides."', a)
+        self.assertIn('  - "901 Kepler"', a)                                  # title from titlePatterns → alias
+        self.assertIn('source-link: "app://test"', a)
+        keys = [ln.split(":")[0] for ln in a.split("---\n")[1].splitlines() if not ln.startswith("  ")]
+        self.assertEqual(keys[:6], ["type", "aliases", "description", "team", "status", "scene"])
+
+    def test_preview_unknown_name(self):
+        r = self.run_script("eagle_asset_notes.py", "--preview", "nope")
+        self.assertNotEqual(r.returncode, 0)
+
+
 class FakeEagle(BaseHTTPRequestHandler):
     lib = ""
 
@@ -268,6 +348,7 @@ class TestImportDryRun(Fixture):
             self.assertIn("added 1 · skipped 1 · failed 0", r.stdout)
         finally:
             srv.shutdown()
+            srv.server_close()
 
 
 if __name__ == "__main__":

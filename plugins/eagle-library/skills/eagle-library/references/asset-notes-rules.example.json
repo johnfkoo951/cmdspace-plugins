@@ -1,9 +1,33 @@
 {
-  "_doc": "Rules for eagle_asset_notes.py. Copy to ~/.config/eagle-library/asset-notes-rules.json (or point config.json 'assetNotesRules' at it) and edit. Only Eagle items inside a folder whose path starts with one of folders[].prefix get a note. scene is decided in this order: overrides → kindScene (fixed per assetKind) → sceneKeywords (first match against item name, own tags and title; the full annotation is NOT searched because headers like 'Usage: lecture deck' cause misclassification) → folders[].defaultScene → defaultScene. Names ending in variantSuffixes (e.g. an upscaled '-hd' copy) share the original's note.",
+  "_doc": "Rules for eagle_asset_notes.py. Copy next to your config.json (or point config 'assetNotesRules' at it) and edit. Only Eagle items in a folder whose path starts with folders[].prefix (plain string prefix: 'A/01 Characters' also matches 'A/01 Characters · Mascot') get a note. Keys starting with _ are ignored.",
+  "_docKeys": {
+    "library": "Library alias from config.json (or a .library path).",
+    "noteRoot": "Vault folder for asset notes; notes go to {noteRoot}/{folders[].group}/{Eagle name}.md.",
+    "baseFile": "Optional. Bases file linked from every note's Source section.",
+    "author": "Optional. Value of the author property.",
+    "lang": "'en' (default) or 'ko' for the note body headings.",
+    "variantSuffixes": "Names ending with these (e.g. an upscaled '-hd' copy) share the original's note.",
+    "systemTags": "Type/system tags that are not copied into note tags and not used as titles or keywords.",
+    "genTagPrefixes": "Tags starting with these are image-model IDs -> genModel property.",
+    "titleKeys": "Annotation markers; the text after the first one found becomes the title (cut at ' · ', ' — ', newline).",
+    "titlePatterns": "Optional regex fallbacks for the title: [{pattern, format}] where format uses {0} (whole match), {1}, {2}...",
+    "titleTagPattern": "Optional regex; when no title key/pattern matches, only own tags matching it form the title.",
+    "characters": "Tag names copied into the characters property when present.",
+    "descriptionTemplate": "Optional. Placeholders {kind} {kindLabel} {name} {title} {library} {usage} {scene}.",
+    "kindLabels / kindLabelDefault": "Optional words for {kindLabel} per assetKind.",
+    "extraFrontmatter": "Constant properties added to every new note.",
+    "commandFields": "Optional {property: [command, args...]}; the command's stdout becomes the value (omitted when empty or failing).",
+    "fieldOrder": "Optional property order; properties not listed keep the default order after the listed ones.",
+    "folders": "[{prefix, group, assetKind, usage, defaultScene?, category?, categoryFromTags?, defaultCategory?}]",
+    "scene": "Decided in order: overrides -> kindScene (fixed per assetKind) -> sceneKeywords (first match against name, own tags and title; the full annotation is NOT searched because headers like 'Usage: lecture deck' cause misclassification) -> category value scene -> folders[].defaultScene -> defaultScene.",
+    "category": "Optional second classification (e.g. owning team). Value decided in order: overrides[name].category -> folders[].categoryFromTags with category.fromTags -> folders[].category -> category.keywords -> folders[].defaultCategory -> category.default. category.values[value] = {frontmatter: {...}, scene: fallback scene, body: [lines; {scene} {name} {title} are filled]}.",
+    "overrides": "Per Eagle name: {usage?, scene?, category?}."
+  },
   "library": "design",
   "noteRoot": "Assets/Visual Assets",
   "baseFile": "Bases/Visual Assets.base",
   "author": "[[Your Name]]",
+  "lang": "en",
   "variantSuffixes": ["-hd"],
   "systemTags": ["character", "scene", "prop", "background", "avatar", "mascot", "draft", "transparent", "hd", "upscaled", "16:9", "9:16", "1:1"],
   "genTagPrefixes": ["gpt-", "gemini-", "flux-", "mj-"],
@@ -17,13 +41,14 @@
       "prefix": "Characters/Mascot/Avatars",
       "group": "Mascot Avatars",
       "assetKind": "Avatar",
+      "category": "brand",
       "usage": ["profile image", "slide corner", "sticker"]
     },
     {
       "prefix": "Characters/Mascot/Scenes",
       "group": "Mascot Scenes",
       "assetKind": "Scene",
-      "defaultScene": "Knowledge Work",
+      "defaultCategory": "brand",
       "usage": ["lecture slides", "blog header", "newsletter"]
     },
     {
@@ -46,9 +71,34 @@
     ["Knowledge Work", ["notes", "graph", "vault", "tag", "노트", "볼트"]]
   ],
   "defaultScene": "Other",
+  "category": {
+    "keywords": [
+      ["education", ["lecture", "workshop", "classroom", "강의"]],
+      ["research", ["paper", "data", "analysis", "논문"]]
+    ],
+    "default": "brand",
+    "values": {
+      "brand": {
+        "frontmatter": {"team": "[[Brand Team]]"},
+        "scene": "Identity",
+        "body": ["## Owner", "- [[Brand Team]] · scene {scene}"]
+      },
+      "education": {
+        "frontmatter": {"team": "[[Education Team]]"},
+        "scene": "Teaching",
+        "body": ["## Owner", "- [[Education Team]] · scene {scene}"]
+      },
+      "research": {
+        "frontmatter": {"team": "[[Research Team]]"},
+        "scene": "Research",
+        "body": ["## Owner", "- [[Research Team]] · scene {scene}"]
+      }
+    }
+  },
   "overrides": {
     "mascot-launch-poster": {
       "scene": "Community",
+      "category": "brand",
       "usage": ["launch announcement", "SNS card"]
     }
   }
